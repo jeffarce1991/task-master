@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "mvvm-template-app"
+rootProject.name = "task-master"
