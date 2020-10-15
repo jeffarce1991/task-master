@@ -24,7 +24,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.mvvm_template_app.ui.UserListActivity"
+        tools:context="com.example.taskmaster.ui.UserListActivity"
         tools:listitem="@layout/user_list_content" />
 
     <FrameLayout
