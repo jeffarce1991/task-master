@@ -8,14 +8,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.taskmaster.R
 import com.example.taskmaster.adapters.RecyclerAdapter
 import com.example.taskmaster.databinding.ActivityMainBinding
 import com.example.taskmaster.databinding.ActivityUserListBinding
 
 import com.example.taskmaster.models.User
+import com.example.taskmaster.utils.hide
+import com.example.taskmaster.utils.show
 import com.example.taskmaster.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.user_list.view.*
 
 /**
  * An activity representing a list of Pings. This activity
@@ -63,20 +67,20 @@ class UserListActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getUsers()?.observe(this,
             Observer<MutableList<User>> {
-                setupRecyclerView(findViewById(R.id.user_list), it)
+                mAdapter.updateList(it)
+                viewModel.setIsUpdating(false)
             })
 
 
         viewModel.getIsUpdating()?.observe(this,
             Observer {
                 if(it!!){
-                    //showProgressBar()
+                    showProgressBar()
                 } else{
-                    //hideProgressBar()
-                    binding.frameLayout.user_list
+                    hideProgressBar()
+                    binding.userList
                         .smoothScrollToPosition(
-                            viewModel
-                                .getUsers()!!.value!!.size -1)
+                            mAdapter.itemCount -1)
                 }
             })
 
@@ -84,6 +88,16 @@ class UserListActivity : AppCompatActivity() {
         binding.fab.setOnClickListener {
             viewModel.addNewValue(User())
         }
+
+        setupRecyclerView()
+    }
+
+    private fun showProgressBar() {
+        binding.progressBar.show()
+    }
+
+    private fun hideProgressBar() {
+        binding.progressBar.hide()
     }
 
     private fun setupToolbar() {
@@ -92,12 +106,9 @@ class UserListActivity : AppCompatActivity() {
         toolbar.title = title
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, users: MutableList<User>) {
-        recyclerView.adapter =
-            RecyclerAdapter(
-                this,
-                users,
-                twoPane
-            )
+    private fun setupRecyclerView() {
+        binding.userList.layoutManager = LinearLayoutManager(this)
+        mAdapter = RecyclerAdapter(this, listOf(), twoPane)
+        binding.userList.adapter = mAdapter
     }
 }
