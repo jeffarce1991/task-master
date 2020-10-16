@@ -1,6 +1,10 @@
 package com.example.taskmaster.ui
 
+import android.app.Activity
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +17,12 @@ import com.example.taskmaster.R
 import com.example.taskmaster.adapters.RecyclerAdapter
 import com.example.taskmaster.databinding.ActivityMainBinding
 import com.example.taskmaster.databinding.ActivityUserListBinding
+import com.example.taskmaster.models.Address
+import com.example.taskmaster.models.Company
 
 import com.example.taskmaster.models.User
 import com.example.taskmaster.utils.hide
+import com.example.taskmaster.utils.invokeInputDialog
 import com.example.taskmaster.utils.show
 import com.example.taskmaster.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,7 +93,7 @@ class UserListActivity : AppCompatActivity() {
 
 
         binding.fab.setOnClickListener {
-            viewModel.addNewValue(User())
+            invokeInputDialog()
         }
 
         setupRecyclerView()
@@ -110,5 +117,34 @@ class UserListActivity : AppCompatActivity() {
         binding.userList.layoutManager = LinearLayoutManager(this)
         mAdapter = RecyclerAdapter(this, listOf(), twoPane)
         binding.userList.adapter = mAdapter
+    }
+
+
+    private fun invokeInputDialog() {
+
+        // Set up the input
+        val input = EditText(this)
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.inputType = InputType.TYPE_CLASS_TEXT
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Task")
+            .setMessage("")
+            .setView(input)
+            .setPositiveButton("OK") { dialog, which ->
+                viewModel.addNewTask(User(
+                    null,
+                    Address(),
+                    Company(),
+                    "sample@gmail.com",
+                    input.text.toString(),
+                    "",
+                    "",
+                    ""))
+            }
+            .setNegativeButton("CANCEL") { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
