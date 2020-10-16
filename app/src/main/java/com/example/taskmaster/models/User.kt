@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "users")
 class User(
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int,
+    var id: Int? = null,
 
     @ColumnInfo(name = "address")
     val address: Address,
@@ -30,7 +30,7 @@ class User(
     @ColumnInfo(name = "website")
     val website: String
 ) {
-    constructor(): this(-1, Address(), Company(), "sample@gmail.com", "Squall Leonheart", "","",    "")
+    constructor(): this(null, Address(), Company(), "sample@gmail.com", "Squall Leonheart", "","",    "")
 }
 
 data class Address(
