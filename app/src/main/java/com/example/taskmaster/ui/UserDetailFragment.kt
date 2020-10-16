@@ -67,7 +67,7 @@ class UserDetailFragment : Fragment() {
                 it.username
         })
 
-        viewModel.setUserId(arguments!!.getString(ARG_USER_ID)!!.toInt())
+        viewModel.getUserById(arguments!!.getString(ARG_USER_ID)!!.toInt())
 
         return detailsBinding.root
     }
