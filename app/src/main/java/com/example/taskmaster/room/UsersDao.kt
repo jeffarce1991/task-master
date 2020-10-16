@@ -10,11 +10,11 @@ import com.example.taskmaster.models.User
 interface UsersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(blogEntity: User): Long
+    fun insert(user: User): Long
 
     @Query("SELECT * FROM users")
     suspend fun get(): MutableList<User>
 
     @Query("SELECT * FROM users WHERE id LIKE :id LIMIT 1")
-    suspend fun findById(id: Int): User
+    fun findById(id: Int): User
 }
