@@ -7,5 +7,7 @@ import com.example.taskmaster.models.User
 interface MainRepository {
 
     fun getUsers(): MutableLiveData<MutableList<User>>
-    fun getById(id: Int): LiveData<User>
+    fun getByIdLive(id: Int): LiveData<User>
+    fun getById(id: Int): User
+    fun addTask(user: User): Long
 }
