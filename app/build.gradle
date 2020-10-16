@@ -17,7 +17,7 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     defaultConfig {
-        applicationId "com.example.mvvm_template_app"
+        applicationId "com.example.taskmaster"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
