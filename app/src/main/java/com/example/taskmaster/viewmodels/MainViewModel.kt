@@ -29,13 +29,13 @@ constructor(
     private var mIsUpdating: MutableLiveData<Boolean> = MutableLiveData()
     init {
         mIsUpdating.postValue(true)
-        mUsers = mainRepository.getLiveUsers()
+        mUsers = mainRepository.getUsers()
     }
 
 
     val user: LiveData<User> = Transformations
         .switchMap(_userId){
-            mainRepository.getById(it)
+            mainRepository.getByIdLive(it)
         }
 
     fun getUserById(userId: Int){
@@ -59,6 +59,24 @@ constructor(
             }
         }
 
+    }
+
+    fun  addNewTask(user: User){
+        mIsUpdating.postValue(true)
+        job = Job()
+        job?.let {
+            CoroutineScope(Dispatchers.IO + it).launch(handler) {
+                delay(1000)
+                val userId = mainRepository.addTask(user)
+                if (userId != -1L) {
+                    val users: MutableList<User>? = mUsers!!.value
+                    users!!.add(mainRepository.getById(userId.toInt()))
+                    mUsers!!.postValue(users)
+                }
+                mIsUpdating.postValue(false)
+                it.complete()
+            }
+        }
     }
 
     fun getUsers() : MutableLiveData<MutableList<User>>? {

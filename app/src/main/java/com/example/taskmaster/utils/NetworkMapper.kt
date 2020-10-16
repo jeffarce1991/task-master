@@ -31,7 +31,7 @@ class NetworkMapper:
 
     override fun mapToDto(model: User): UserDto {
         return UserDto(
-            model.id,
+            model.id!!,
             AddressDto(
                 model.address.city,
                 model.address.street,
