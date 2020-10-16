@@ -37,29 +37,16 @@ class MainRepositoryImpl
             override fun onActive() {
                 super.onActive()
                 job?.let { theJob ->
-                    CoroutineScope(IO + theJob).launch(handler) {
-
+                    CoroutineScope(IO + theJob).launch {
                         try {
-                            val remoteUsers = usersApi.getUsers()
-                            println("debug: Remote Users $remoteUsers")
-
-                            for(dto in remoteUsers){
-                                usersDao.insert(networkMapper.mapFromDto(dto))
-                            }
-
+                            val cachedUsers = usersDao.get()
+                            println("debug: Cached Users $cachedUsers")
                             withContext(Main) {
-                                value = networkMapper.mapFromDtoList(remoteUsers) as MutableList<User>
+                                value = cachedUsers
                                 theJob.complete()
                             }
                         } catch(e: Exception) {
-                            if (e is UnknownHostException) {
-                                val cachedUsers = usersDao.get()
-                                println("debug: Cached Users $cachedUsers")
-                                withContext(Main) {
-                                    value = cachedUsers
-                                    theJob.complete()
-                                }
-                            }
+                            println("debug: Exception thrown: $e")
                         }
                     }
                 }
@@ -67,7 +54,7 @@ class MainRepositoryImpl
         }
     }
 
-    override fun getById(id: Int): LiveData<User> {
+    override fun getByIdLive(id: Int): LiveData<User> {
         job = Job()
         return object: LiveData<User>(){
             override fun onActive() {
@@ -75,7 +62,7 @@ class MainRepositoryImpl
                 job?.let{ theJob ->
                     CoroutineScope(IO + theJob).launch {
                         val user = usersDao.findById(id)
-                        println("debug: User ${user.company.name}")
+                        println("debug: User ${user.name}")
                         withContext(Main){
                             value = user
                             theJob.complete()
@@ -84,6 +71,16 @@ class MainRepositoryImpl
                 }
             }
         }
+    }
+
+    override fun addTask(user: User): Long {
+        val result = usersDao.insert(user)
+        println("debug: addTask result $result")
+        return result
+    }
+
+    override fun getById(id: Int): User {
+        return usersDao.findById(id)
     }
 
 
