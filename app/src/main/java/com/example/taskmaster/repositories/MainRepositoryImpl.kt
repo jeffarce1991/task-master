@@ -37,7 +37,7 @@ class MainRepositoryImpl
             override fun onActive() {
                 super.onActive()
                 job?.let { theJob ->
-                    CoroutineScope(Dispatchers.IO + theJob).launch(handler) {
+                    CoroutineScope(IO + theJob).launch(handler) {
 
                         try {
                             val remoteUsers = usersApi.getUsers()
@@ -47,7 +47,7 @@ class MainRepositoryImpl
                                 usersDao.insert(networkMapper.mapFromDto(dto))
                             }
 
-                            withContext(Dispatchers.Main) {
+                            withContext(Main) {
                                 value = networkMapper.mapFromDtoList(remoteUsers) as MutableList<User>
                                 theJob.complete()
                             }
@@ -55,7 +55,7 @@ class MainRepositoryImpl
                             if (e is UnknownHostException) {
                                 val cachedUsers = usersDao.get()
                                 println("debug: Cached Users $cachedUsers")
-                                withContext(Dispatchers.Main) {
+                                withContext(Main) {
                                     value = cachedUsers
                                     theJob.complete()
                                 }
@@ -66,7 +66,6 @@ class MainRepositoryImpl
             }
         }
     }
-
 
     override fun getById(id: Int): LiveData<User> {
         job = Job()
