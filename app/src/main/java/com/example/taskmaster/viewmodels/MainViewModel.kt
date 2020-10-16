@@ -28,7 +28,8 @@ constructor(
     private var mUser: MutableLiveData<User>? = null
     private var mIsUpdating: MutableLiveData<Boolean> = MutableLiveData()
     init {
-        mUsers = mainRepository.getUsers()
+        mIsUpdating.postValue(true)
+        mUsers = mainRepository.getLiveUsers()
     }
 
 
@@ -37,12 +38,11 @@ constructor(
             mainRepository.getById(it)
         }
 
-    fun setUserId(userId: Int){
-        val update = userId
-        if (_userId.value == update) {
+    fun getUserById(userId: Int){
+        if (_userId.value == userId) {
             return
         }
-        _userId.value = update
+        _userId.value = userId
     }
 
     fun  addNewValue(user: User) {
@@ -68,6 +68,10 @@ constructor(
 
     fun getIsUpdating(): LiveData<Boolean?>? {
         return mIsUpdating
+    }
+
+    fun setIsUpdating(isUpdating: Boolean) {
+        mIsUpdating.postValue(isUpdating)
     }
 
     fun cancelJobs() {
