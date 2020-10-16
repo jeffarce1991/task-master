@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taskmaster.R
-import com.example.taskmaster.databinding.ItemNicePlaceBinding
 import com.example.taskmaster.databinding.UserListContentBinding
 import com.example.taskmaster.models.User
 import com.example.taskmaster.ui.UserDetailActivity
@@ -18,7 +17,7 @@ import com.example.taskmaster.ui.UserListActivity
 
 internal class RecyclerAdapter(
     private val parentActivity: UserListActivity,
-    private val values: List<User>,
+    private var mUsers: List<User>,
     private val twoPane: Boolean
 ) : RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
 
@@ -63,11 +62,15 @@ internal class RecyclerAdapter(
         return CustomViewHolder(binding)
     }
 
+    fun updateList(users: List<User>) {
+        mUsers = users
+        notifyDataSetChanged()
+    }
 
-    override fun getItemCount() = values.size
+    override fun getItemCount() = mUsers.size
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        val item = values[position]
+        val item = mUsers[position]
         holder.idView.text = item.id.toString()
         holder.contentView.text = item.name
 
