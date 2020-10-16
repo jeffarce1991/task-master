@@ -8,7 +8,7 @@ import com.example.taskmaster.room.converter.UserConverter
 
 @Database(
     entities = [User::class ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(
