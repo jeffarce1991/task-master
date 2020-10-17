@@ -45,22 +45,6 @@ constructor(
         _userId.value = userId
     }
 
-    fun  addNewValue(user: User) {
-        mIsUpdating.postValue(true)
-        job = Job()
-        job?.let {
-            CoroutineScope(Dispatchers.IO + it).launch(handler) {
-                delay(1000)
-                val users: MutableList<User>? = mUsers!!.value
-                users!!.add(user)
-                mUsers!!.postValue(users)
-                mIsUpdating.postValue(false)
-                it.complete()
-            }
-        }
-
-    }
-
     fun  addNewTask(user: User){
         mIsUpdating.postValue(true)
         job = Job()
@@ -79,8 +63,23 @@ constructor(
         }
     }
 
+    fun updateUser(user: User) {
+        job = Job()
+        job?.let {
+            CoroutineScope(Dispatchers.IO + it).launch(handler) {
+                mainRepository.addTask(user)
+                mUser!!.postValue(user)
+                it.complete()
+            }
+        }
+    }
+
     fun getUsers() : MutableLiveData<MutableList<User>>? {
         return mUsers
+    }
+
+    fun getUser() : MutableLiveData<User>? {
+        return mUser
     }
 
 
