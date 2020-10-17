@@ -1,32 +1,31 @@
 package com.example.taskmaster.ui
 
-import android.app.Activity
 import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.NestedScrollView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.taskmaster.R
 import com.example.taskmaster.adapters.RecyclerAdapter
-import com.example.taskmaster.databinding.ActivityMainBinding
 import com.example.taskmaster.databinding.ActivityUserListBinding
 import com.example.taskmaster.models.Address
 import com.example.taskmaster.models.Company
-
 import com.example.taskmaster.models.User
 import com.example.taskmaster.utils.hide
-import com.example.taskmaster.utils.invokeInputDialog
 import com.example.taskmaster.utils.show
 import com.example.taskmaster.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.user_list.view.*
+import java.security.AccessController.getContext
+
 
 /**
  * An activity representing a list of Pings. This activity
@@ -72,8 +71,10 @@ class UserListActivity : AppCompatActivity() {
         }
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         viewModel.getUsers()?.observe(this,
             Observer<MutableList<User>> {
+                println("debug: onChanged ${it.size} ")
                 mAdapter.updateList(it)
                 viewModel.setIsUpdating(false)
             })
@@ -85,9 +86,12 @@ class UserListActivity : AppCompatActivity() {
                     showProgressBar()
                 } else{
                     hideProgressBar()
-                    binding.userList
-                        .smoothScrollToPosition(
-                            mAdapter.itemCount -1)
+                    if(mAdapter.itemCount > 0){
+                        println("debug: adapter count is ${mAdapter.itemCount}")
+                        binding.recyclerviewUsers
+                            .smoothScrollToPosition(
+                                mAdapter.itemCount -1)
+                    }
                 }
             })
 
@@ -97,6 +101,7 @@ class UserListActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
+        setUpItemTouchHelper()
     }
 
     private fun showProgressBar() {
@@ -114,11 +119,62 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        binding.userList.layoutManager = LinearLayoutManager(this)
+        binding.recyclerviewUsers.layoutManager = LinearLayoutManager(this)
         mAdapter = RecyclerAdapter(this, listOf(), twoPane)
-        binding.userList.adapter = mAdapter
+        binding.recyclerviewUsers.adapter = mAdapter
     }
 
+    private fun setUpItemTouchHelper() {
+        val simpleCallback: ItemTouchHelper.SimpleCallback =
+            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Int
+                ) {
+                    /*val swipedPokemonPosition = viewHolder.adapterPosition
+                    val pokemon: Pokemon = adapter.getPokemonAt(swipedPokemonPosition)
+                    viewModel.insertPokemon(pokemon)
+                    adapter.notifyDataSetChanged()
+                    Toast.makeText(getContext(), "Pokemon added to favorites.", Toast.LENGTH_SHORT)
+                        .show()*/
+                }
+            }
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerviewUsers)
+
+        val simpleCallback2: ItemTouchHelper.SimpleCallback =
+            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Int
+                ) {
+                    /*val swipedPokemonPosition = viewHolder.adapterPosition
+                    val pokemon: Pokemon = adapter.getPokemonAt(swipedPokemonPosition)
+                    viewModel.insertPokemon(pokemon)
+                    adapter.notifyDataSetChanged()
+                    Toast.makeText(getContext(), "Pokemon added to favorites.", Toast.LENGTH_SHORT)
+                        .show()*/
+                }
+            }
+        val itemTouchHelper2 = ItemTouchHelper(simpleCallback2)
+        itemTouchHelper2.attachToRecyclerView(binding.recyclerviewUsers)
+    }
 
     private fun invokeInputDialog() {
 
