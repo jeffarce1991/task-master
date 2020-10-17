@@ -22,7 +22,7 @@ class User(
     val email: String,
 
     @ColumnInfo(name = "name")
-    val name: String,
+    var name: String,
     @ColumnInfo(name = "phone")
     val phone: String,
     @ColumnInfo(name = "username")
