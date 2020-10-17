@@ -1,5 +1,6 @@
 package com.example.taskmaster.ui
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -66,18 +67,22 @@ class UserDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        navigateUpTo(Intent(this, UserListActivity::class.java))
+    }
+
     override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
             android.R.id.home -> {
 
-                /*// This ID represents the Home or Up button. In the case of this
+                // This ID represents the Home or Up button. In the case of this
                 // activity, the Up button is shown. For
                 // more details, see the Navigation pattern on Android Design:
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
 
-                navigateUpTo(Intent(this, UserListActivity::class.java))*/
-                onBackPressed()
+                navigateUpTo(Intent(this, UserListActivity::class.java))
+                //onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)
