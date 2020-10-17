@@ -1,6 +1,8 @@
 package com.example.taskmaster.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
@@ -26,7 +28,7 @@ class UserDetailFragment : Fragment() {
     /**
      * The dummy content this fragment is presenting.
      */
-    private var item: User? = null
+    private lateinit var user: User
     private lateinit var viewModel: MainViewModel
     private lateinit var activityBinding: ActivityUserDetailBinding
     private lateinit var detailsBinding: UserDetailsBinding
@@ -49,7 +51,6 @@ class UserDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.user_details, container, false)
         activityBinding = DataBindingUtil.inflate(
             inflater, R.layout.activity_user_detail, container, false);
 
@@ -61,18 +62,47 @@ class UserDetailFragment : Fragment() {
 
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
-            println("DEBUG: ${it.name}")
-            setUserDetails(it)
-            activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title =
-                it.username
+            println("debug: onChanged ${it.name}")
+            user = it
+            setUserDetails(user)
+            activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = user.name
         })
 
         viewModel.getUserById(arguments!!.getString(ARG_USER_ID)!!.toInt())
+
+        detailsBinding.notes.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                user.name = s.toString()
+                viewModel.updateUser(user)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        detailsBinding.notes.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                user.name = detailsBinding.notes.text.toString()
+                viewModel.updateUser(user)
+
+                println("debug: focus !hasFocus")
+            }
+
+            println("debug: focus $hasFocus")
+        }
+        
+        detailsBinding.saveNotes.setOnClickListener {
+            viewModel.updateUser(user)
+        }
 
         return detailsBinding.root
     }
 
     private fun setUserDetails(user: User) {
+        detailsBinding.notes.setText(user.name)
         detailsBinding.name.text = user.name
         detailsBinding.email.text = user.email
         detailsBinding.phone.text = user.phone
@@ -81,6 +111,7 @@ class UserDetailFragment : Fragment() {
         detailsBinding.company.text = user.company.name
         detailsBinding.catchPhrase.text = user.company.catchPhrase
     }
+
 
     companion object {
         /**
