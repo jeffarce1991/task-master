@@ -1,10 +1,7 @@
 package com.example.taskmaster.ui
 
 import android.os.Bundle
-import android.text.InputType
-import android.widget.EditText
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
@@ -24,7 +21,6 @@ import com.example.taskmaster.utils.hide
 import com.example.taskmaster.utils.show
 import com.example.taskmaster.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.security.AccessController.getContext
 
 
 /**
@@ -36,7 +32,7 @@ import java.security.AccessController.getContext
  * item details side-by-side using two vertical panes.
  */
 @AndroidEntryPoint
-class UserListActivity : AppCompatActivity() {
+class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener {
 
     private lateinit var mAdapter: RecyclerAdapter
     private lateinit var viewModel: MainViewModel
