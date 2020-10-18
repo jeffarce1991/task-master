@@ -92,9 +92,8 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
             })
 
 
-        binding.fab.setOnClickListener {
-            invokeInputDialog()
-        }
+
+        binding.fab.setOnClickListener(this);
 
         setupRecyclerView()
         setUpItemTouchHelper()
@@ -172,31 +171,26 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
         itemTouchHelper2.attachToRecyclerView(binding.recyclerviewUsers)
     }
 
-    private fun invokeInputDialog() {
+    override fun createNewTask(title: String?, content: String?) {
+        viewModel.addNewTask(User(
+            null,
+            Address(),
+            Company(),
+            "sample@gmail.com",
+            content!!,
+            "",
+            "",
+            ""))
+    }
 
-        // Set up the input
-        val input = EditText(this)
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.inputType = InputType.TYPE_CLASS_TEXT
+    override fun onClick(view: View?) {
+        when (view!!.id) {
+            R.id.fab -> {
 
-        AlertDialog.Builder(this)
-            .setTitle("Add Task")
-            .setMessage("")
-            .setView(input)
-            .setPositiveButton("OK") { dialog, which ->
-                viewModel.addNewTask(User(
-                    null,
-                    Address(),
-                    Company(),
-                    "sample@gmail.com",
-                    input.text.toString(),
-                    "",
-                    "",
-                    ""))
+                //create a new note
+                val dialog = NewTaskDialog()
+                dialog.show(supportFragmentManager, getString(R.string.dialog_new_task))
             }
-            .setNegativeButton("CANCEL") { dialog, which ->
-                dialog.dismiss()
-            }
-            .show()
+        }
     }
 }
