@@ -6,4 +6,7 @@
     <string name="cancel">Cancel</string>
     <string name="notes">Notes</string>
     <string name="save">Save</string>
+    <string name="task_title">Title</string>
+    <string name="task_content">Content</string>
+    <string name="dialog_new_task">New Task</string>
 </resources>
