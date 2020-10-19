@@ -18,7 +18,7 @@ android {
     }
     defaultConfig {
         applicationId "com.example.taskmaster"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0.0"
