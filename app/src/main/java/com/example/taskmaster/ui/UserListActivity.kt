@@ -1,6 +1,7 @@
 package com.example.taskmaster.ui
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -97,7 +98,22 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
 
         setupRecyclerView()
         setUpItemTouchHelper()
+
+        println("debug: TIMESTAMP: ${getCurrentTimestamp()}")
+        println("debug: DATE: ${getCurrentDateNumeric()}")
     }
+
+    private fun getCurrentDate(): String {
+        return DateUtils.formatDateTime(this, getCurrentTimestamp(), DateUtils.FORMAT_SHOW_YEAR)
+    }
+
+    private fun getCurrentDateNumeric(): String {
+        return DateUtils.formatDateTime(this, getCurrentTimestamp(), DateUtils.FORMAT_NUMERIC_DATE)
+    }
+
+    private fun getCurrentTimestamp(): Long = (System.currentTimeMillis() / 1000) * 1000
+
+
 
     private fun showProgressBar() {
         binding.progressBar.show()

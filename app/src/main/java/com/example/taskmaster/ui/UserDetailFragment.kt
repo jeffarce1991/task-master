@@ -16,6 +16,7 @@ import com.example.taskmaster.databinding.ActivityUserDetailBinding
 import com.example.taskmaster.databinding.UserDetailsBinding
 import com.example.taskmaster.models.User
 import com.example.taskmaster.viewmodels.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * A fragment representing a single User detail screen.
@@ -94,7 +95,7 @@ class UserDetailFragment : Fragment() {
             println("debug: focus $hasFocus")
         }
         
-        detailsBinding.saveNotes.setOnClickListener {
+        detailsBinding.saveTask.setOnClickListener {
             viewModel.updateUser(user)
         }
 
