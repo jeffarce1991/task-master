@@ -12,39 +12,38 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.taskmaster.R
-import com.example.taskmaster.databinding.ActivityUserDetailBinding
-import com.example.taskmaster.databinding.UserDetailsBinding
-import com.example.taskmaster.models.User
+import com.example.taskmaster.databinding.ActivityTaskDetailBinding
+import com.example.taskmaster.databinding.FragmentTaskDetailsBinding
+import com.example.taskmaster.models.Task
 import com.example.taskmaster.viewmodels.MainViewModel
-import com.google.android.material.snackbar.Snackbar
 
 /**
- * A fragment representing a single User detail screen.
- * This fragment is either contained in a [UserListActivity]
- * in two-pane mode (on tablets) or a [UserDetailActivity]
+ * A fragment representing a single Task detail screen.
+ * This fragment is either contained in a [TaskListActivity]
+ * in two-pane mode (on tablets) or a [TaskDetailActivity]
  * on handsets.
  */
-class UserDetailFragment : Fragment() {
+class TaskDetailFragment : Fragment() {
 
     /**
      * The dummy content this fragment is presenting.
      */
-    private lateinit var user: User
+    private lateinit var selectedTask: Task
     private lateinit var viewModel: MainViewModel
-    private lateinit var activityBinding: ActivityUserDetailBinding
-    private lateinit var detailsBinding: UserDetailsBinding
+    private lateinit var activityBinding: ActivityTaskDetailBinding
+    private lateinit var detailsBinding: FragmentTaskDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            if (it.containsKey(ARG_USER_ID)) {
+            if (it.containsKey(ARG_TASK_ID)) {
                 // Load the dummy content specified by the fragment
                 // arguments. In a real-world scenario, use a Loader
                 // to load content from a content provider.
                 //item = getUser()
                 activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title =
-                    it.getString(ARG_USER_ID)
+                    it.getString(ARG_TASK_ID)
             }
         }
     }
@@ -53,28 +52,28 @@ class UserDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         activityBinding = DataBindingUtil.inflate(
-            inflater, R.layout.activity_user_detail, container, false);
+            inflater, R.layout.activity_task_detail, container, false);
 
         detailsBinding = DataBindingUtil.inflate(
-            inflater, R.layout.user_details, container, false);
+            inflater, R.layout.fragment_task_details, container, false);
 
         viewModel = activity?.run { ViewModelProvider(activity!!)[MainViewModel::class.java] }
             ?: throw Exception("DEBUG: Invalid Activity")
 
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            println("debug: onChanged ${it.name}")
-            user = it
-            setUserDetails(user)
-            activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = user.name
+        viewModel.task.observe(viewLifecycleOwner, Observer {
+            println("debug: onChanged ${it.title}")
+            selectedTask = it
+            setDetails(selectedTask)
+            activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = selectedTask.title
         })
 
-        viewModel.getUserById(arguments!!.getString(ARG_USER_ID)!!.toInt())
+        viewModel.getTaskById(arguments!!.getString(ARG_TASK_ID)!!.toInt())
 
-        detailsBinding.notes.addTextChangedListener(object : TextWatcher {
+        detailsBinding.description.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                user.name = s.toString()
-                viewModel.updateUser(user)
+                selectedTask.description = s.toString()
+                viewModel.updateTask(selectedTask)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -84,10 +83,10 @@ class UserDetailFragment : Fragment() {
             }
         })
 
-        detailsBinding.notes.setOnFocusChangeListener { v, hasFocus ->
+        detailsBinding.description.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                user.name = detailsBinding.notes.text.toString()
-                viewModel.updateUser(user)
+                selectedTask.title = detailsBinding.title.text.toString()
+                viewModel.updateTask(selectedTask)
 
                 println("debug: focus !hasFocus")
             }
@@ -96,21 +95,17 @@ class UserDetailFragment : Fragment() {
         }
         
         detailsBinding.saveTask.setOnClickListener {
-            viewModel.updateUser(user)
+            viewModel.updateTask(selectedTask)
         }
 
         return detailsBinding.root
     }
 
-    private fun setUserDetails(user: User) {
-        detailsBinding.notes.setText(user.name)
-        detailsBinding.name.text = user.name
-        detailsBinding.email.text = user.email
-        detailsBinding.phone.text = user.phone
-        detailsBinding.location.text = String
-            .format("${user.address.suite}, ${user.address.street}, ${user.address.city}" )
-        detailsBinding.company.text = user.company.name
-        detailsBinding.catchPhrase.text = user.company.catchPhrase
+    private fun setDetails(task: Task) {
+        detailsBinding.description.setText(task.description)
+        detailsBinding.title.text = task.title
+        /*detailsBinding.location.text = String
+            .format("${task.address.suite}, ${task.address.street}, ${task.address.city}" )*/
     }
 
 
@@ -119,6 +114,6 @@ class UserDetailFragment : Fragment() {
          * The fragment argument representing the item ID that this fragment
          * represents.
          */
-        const val ARG_USER_ID = "user_id"
+        const val ARG_TASK_ID = "task_id"
     }
 }

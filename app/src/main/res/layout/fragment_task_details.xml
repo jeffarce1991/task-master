@@ -9,8 +9,8 @@ xmlns:tools="http://schemas.android.com/tools">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.UserDetailFragment"
-    tools:showIn="@layout/activity_user_detail">
+    tools:context=".ui.TaskDetailFragment"
+    tools:showIn="@layout/activity_task_detail">
 
     <LinearLayout
         android:focusableInTouchMode="true"
@@ -125,7 +125,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
                     <TextView
                         style="@style/TextAppearance.MaterialComponents.Body1"
-                        android:id="@+id/name"
+                        android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
@@ -140,7 +140,7 @@ xmlns:tools="http://schemas.android.com/tools">
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/screen_margin"
                         android:text="Location"
-                        app:layout_constraintTop_toBottomOf="@id/name"
+                        app:layout_constraintTop_toBottomOf="@id/title"
                         app:layout_constraintStart_toStartOf="parent"/>
 
                     <TextView
@@ -205,12 +205,12 @@ xmlns:tools="http://schemas.android.com/tools">
                 android:gravity="center">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/notes"
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lines="5"
                     android:gravity="top"
-                    android:hint="@string/notes"
+                    android:hint="@string/task_description"
                     android:inputType="textMultiLine"
                     android:maxLines="12"
                     android:minLines="7" />

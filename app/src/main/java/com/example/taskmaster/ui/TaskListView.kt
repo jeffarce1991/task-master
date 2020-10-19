@@ -1,9 +1,9 @@
 package com.example.taskmaster.ui
 
-interface UserListView {
+interface TaskListView {
 
 
-    fun createNewTask(title: String?, content: String?)
+    fun createNewTask(title: String?, description: String?)
 
     /*fun updateNote(note: Note?)
 

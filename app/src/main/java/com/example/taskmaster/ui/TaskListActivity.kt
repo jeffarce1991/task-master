@@ -14,26 +14,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taskmaster.R
 import com.example.taskmaster.adapters.RecyclerAdapter
-import com.example.taskmaster.databinding.ActivityUserListBinding
-import com.example.taskmaster.models.Address
-import com.example.taskmaster.models.Company
-import com.example.taskmaster.models.User
+import com.example.taskmaster.databinding.ActivityTaskListBinding
+import com.example.taskmaster.models.Task
 import com.example.taskmaster.utils.hide
 import com.example.taskmaster.utils.show
 import com.example.taskmaster.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.item_task.*
 
 
 /**
  * An activity representing a list of Pings. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a [UserDetailActivity] representing
+ * lead to a [TaskDetailActivity] representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
 @AndroidEntryPoint
-class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener {
+class TaskListActivity : AppCompatActivity(), TaskListView, View.OnClickListener {
 
     private lateinit var mAdapter: RecyclerAdapter
     private lateinit var viewModel: MainViewModel
@@ -42,13 +41,13 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
      * device.
      */
     private var twoPane: Boolean = false
-    private lateinit var binding : ActivityUserListBinding
+    private lateinit var binding : ActivityTaskListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_list)
+        setContentView(R.layout.activity_task_list)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_list)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_task_list)
 
 
         setupToolbar()
@@ -59,7 +58,7 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
         }*/
 
 
-        if (findViewById<NestedScrollView>(R.id.user_detail_container) != null) {
+        if (findViewById<NestedScrollView>(R.id.task_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -69,9 +68,12 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        viewModel.getUsers()?.observe(this,
-            Observer<MutableList<User>> {
+        viewModel.getTasks()?.observe(this,
+            Observer<MutableList<Task>> {
                 println("debug: onChanged ${it.size} ")
+                if (it.size > 0) {
+                    println("debug: onChanged ${it[0].title} ")
+                }
                 mAdapter.updateList(it)
                 viewModel.setIsUpdating(false)
             })
@@ -85,7 +87,7 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
                     hideProgressBar()
                     if(mAdapter.itemCount > 0){
                         println("debug: adapter count is ${mAdapter.itemCount}")
-                        binding.recyclerviewUsers
+                        binding.recyclerviewTasks
                             .smoothScrollToPosition(
                                 mAdapter.itemCount -1)
                     }
@@ -130,9 +132,9 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerviewUsers.layoutManager = LinearLayoutManager(this)
+        binding.recyclerviewTasks.layoutManager = LinearLayoutManager(this)
         mAdapter = RecyclerAdapter(this, listOf(), twoPane)
-        binding.recyclerviewUsers.adapter = mAdapter
+        binding.recyclerviewTasks.adapter = mAdapter
     }
 
     private fun setUpItemTouchHelper() {
@@ -159,7 +161,7 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
                 }
             }
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
-        itemTouchHelper.attachToRecyclerView(binding.recyclerviewUsers)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerviewTasks)
 
         val simpleCallback2: ItemTouchHelper.SimpleCallback =
             object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -184,19 +186,11 @@ class UserListActivity : AppCompatActivity(), UserListView, View.OnClickListener
                 }
             }
         val itemTouchHelper2 = ItemTouchHelper(simpleCallback2)
-        itemTouchHelper2.attachToRecyclerView(binding.recyclerviewUsers)
+        itemTouchHelper2.attachToRecyclerView(binding.recyclerviewTasks)
     }
 
-    override fun createNewTask(title: String?, content: String?) {
-        viewModel.addNewTask(User(
-            null,
-            Address(),
-            Company(),
-            "sample@gmail.com",
-            content!!,
-            "",
-            "",
-            ""))
+    override fun createNewTask(title: String?, description: String?) {
+        viewModel.addNewTask(Task(null, title!!, description!!, 0, getCurrentTimestamp(), null))
     }
 
     override fun onClick(view: View?) {

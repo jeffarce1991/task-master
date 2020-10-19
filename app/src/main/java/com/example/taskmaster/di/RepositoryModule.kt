@@ -3,7 +3,7 @@ package com.example.taskmaster.di
 import com.example.taskmaster.api.UsersApi
 import com.example.taskmaster.repositories.MainRepository
 import com.example.taskmaster.repositories.MainRepositoryImpl
-import com.example.taskmaster.room.UsersDao
+import com.example.taskmaster.room.TaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,10 +16,10 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideMainRepository(usersDao: UsersDao,
+    fun provideMainRepository(taskDao: TaskDao,
                               usersApi: UsersApi): MainRepository {
         return MainRepositoryImpl(
-            usersDao,
+            taskDao,
             usersApi)
     }
 }

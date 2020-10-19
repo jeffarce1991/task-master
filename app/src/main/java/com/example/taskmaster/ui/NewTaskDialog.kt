@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.example.taskmaster.R
 
@@ -16,15 +15,15 @@ import com.example.taskmaster.R
 class NewTaskDialog : DialogFragment(), View.OnClickListener {
     //widgets
     private var mTitle: EditText? = null
-    private var mContent: EditText? = null
+    private var mDescription: EditText? = null
     private var mCreate: TextView? = null
     private var mCancel: TextView? = null
 
     //vars
-    private var userListView: UserListView? = null
+    private var taskListView: TaskListView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userListView = activity as UserListView?
+        taskListView = activity as TaskListView?
         val style: Int = STYLE_NORMAL
         val theme = R.style.Theme_AppCompat_DayNight_Dialog
         setStyle(style, theme)
@@ -37,13 +36,14 @@ class NewTaskDialog : DialogFragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.dialog_new_task, container, false)
-        mTitle = view.findViewById(R.id.note_title)
-        mContent = view.findViewById(R.id.note_content)
+        mTitle = view.findViewById(R.id.task_title)
+        mDescription = view.findViewById(R.id.description)
+
         mCreate = view.findViewById(R.id.create)
         mCancel = view.findViewById(R.id.cancel)
         mCancel!!.setOnClickListener(this)
         mCreate!!.setOnClickListener(this)
-        dialog!!.setTitle("New Note")
+        dialog!!.setTitle("New Task")
         return view
     }
 
@@ -52,9 +52,9 @@ class NewTaskDialog : DialogFragment(), View.OnClickListener {
             R.id.create -> {
                 // insert the new note
                 val title = mTitle!!.text.toString()
-                val content = mContent!!.text.toString()
+                val content = mDescription!!.text.toString()
                 if (title != "") {
-                    userListView!!.createNewTask(title, content)
+                    taskListView!!.createNewTask(title, content)
                     dialog!!.dismiss()
                 } else {
                     Toast.makeText(activity, "Enter a title", Toast.LENGTH_SHORT).show()

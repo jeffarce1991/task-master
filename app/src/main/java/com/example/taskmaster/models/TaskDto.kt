@@ -2,57 +2,47 @@ package com.example.taskmaster.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-/*
+data class TaskDto(
+    /*
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    var id: Int? = null,
 
-data class User (
-    @Expose
-    @SerializedName("email")
-    val email: String? = null,
+    @ColumnInfo(name = "title")
+    var title: String,
 
-    @Expose
-    @SerializedName("username")
-    val username: String? = null,
+    @ColumnInfo(name = "description")
+    var description: String,
 
-    @Expose
-    @SerializedName("image")
-    val image: String? = null
-    ) {
-        override fun toString(): String {
-            return "User(email=$email, username=$username, image=$image)"
-        }
+    @ColumnInfo(name = "status")
+    var status: Int,
 
+    @ColumnInfo(name = "date_created")
+    val dateCreated: Long,
 
-}
-*/
-
-
-data class UserDto(
+    @ColumnInfo(name = "date_completed")
+    var dateCompleted: Long
+    */
     @Expose
     @SerializedName("id")
     val id: Int,
     @Expose
-    @SerializedName("address")
-    val address: AddressDto,
+    @SerializedName("title")
+    val title: String,
     @Expose
-    @SerializedName("company")
-    val company: CompanyDto,
+    @SerializedName("description")
+    val description: String,
     @Expose
-    @SerializedName("email")
-    val email: String,
+    @SerializedName("status")
+    val status: Int,
     @Expose
-    @SerializedName("name")
-    val name: String,
+    @SerializedName("date_created")
+    val dateCreated: Long,
     @Expose
-    @SerializedName("phone")
-    val phone: String,
-    @Expose
-    @SerializedName("username")
-    val username: String,
-    @Expose
-    @SerializedName("website")
-    val website: String
+    @SerializedName("date_completed")
+    val dateCompleted: Long
 ) {
-    constructor(): this(-1,AddressDto(), CompanyDto(), "sample@gmail.com",  "Squall Leonheart", "","",    "")
+    constructor(): this(-1, "", "", 0, 0, 0)
 }
 
 data class AddressDto(

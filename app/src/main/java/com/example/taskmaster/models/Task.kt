@@ -5,32 +5,31 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "users")
-class User(
+@Entity(tableName = "tasks")
+class Task(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int? = null,
 
-    @ColumnInfo(name = "address")
-    val address: Address,
+    @ColumnInfo(name = "title")
+    var title: String,
 
-    @ColumnInfo(name = "company")
-    val company: Company,
+    @ColumnInfo(name = "description")
+    var description: String,
 
-    @ColumnInfo(name = "email")
-    val email: String,
+    @ColumnInfo(name = "status")
+    var status: Int? = 0,
 
-    @ColumnInfo(name = "name")
-    var name: String,
-    @ColumnInfo(name = "phone")
-    val phone: String,
-    @ColumnInfo(name = "username")
-    val username: String,
-    @ColumnInfo(name = "website")
-    val website: String
+    @ColumnInfo(name = "date_created")
+    val dateCreated: Long,
+
+    @ColumnInfo(name = "date_completed")
+    var dateCompleted: Long? = -1
+
+
 ) {
-    constructor(): this(null, Address(), Company(), "sample@gmail.com", "Squall Leonheart", "","",    "")
+    constructor(): this(null, "", "", null, 0, null)
 }
 
 data class Address(

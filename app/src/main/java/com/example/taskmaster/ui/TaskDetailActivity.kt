@@ -7,23 +7,23 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.taskmaster.R
-import com.example.taskmaster.databinding.ActivityUserDetailBinding
+import com.example.taskmaster.databinding.ActivityTaskDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * An activity representing a single User detail screen. This
+ * An activity representing a single Task detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a [UserListActivity].
+ * in a [TaskListActivity].
  */
 @AndroidEntryPoint
-class UserDetailActivity : AppCompatActivity() {
+class TaskDetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityUserDetailBinding
+    private lateinit var binding: ActivityTaskDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_detail)
+        setContentView(R.layout.activity_task_detail)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
 
@@ -52,23 +52,23 @@ class UserDetailActivity : AppCompatActivity() {
         if (bundle == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = UserDetailFragment().apply {
+            val fragment = TaskDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString(
-                        UserDetailFragment.ARG_USER_ID,
-                        intent.getStringExtra(UserDetailFragment.ARG_USER_ID)
+                        TaskDetailFragment.ARG_TASK_ID,
+                        intent.getStringExtra(TaskDetailFragment.ARG_TASK_ID)
                     )
                 }
             }
 
             supportFragmentManager.beginTransaction()
-                .add(R.id.user_detail_container, fragment)
+                .add(R.id.task_detail_container, fragment)
                 .commit()
         }
     }
 
     override fun onBackPressed() {
-        navigateUpTo(Intent(this, UserListActivity::class.java))
+        navigateUpTo(Intent(this, TaskListActivity::class.java))
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -81,7 +81,7 @@ class UserDetailActivity : AppCompatActivity() {
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
 
-                navigateUpTo(Intent(this, UserListActivity::class.java))
+                navigateUpTo(Intent(this, TaskListActivity::class.java))
                 //onBackPressed()
                 true
             }

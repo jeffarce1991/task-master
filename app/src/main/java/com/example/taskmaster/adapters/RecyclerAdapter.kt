@@ -9,15 +9,15 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taskmaster.R
-import com.example.taskmaster.databinding.UserListContentBinding
-import com.example.taskmaster.models.User
-import com.example.taskmaster.ui.UserDetailActivity
-import com.example.taskmaster.ui.UserDetailFragment
-import com.example.taskmaster.ui.UserListActivity
+import com.example.taskmaster.databinding.ItemTaskBinding
+import com.example.taskmaster.models.Task
+import com.example.taskmaster.ui.TaskDetailActivity
+import com.example.taskmaster.ui.TaskDetailFragment
+import com.example.taskmaster.ui.TaskListActivity
 
 internal class RecyclerAdapter(
-    private val parentActivity: UserListActivity,
-    private var mUsers: List<User>,
+    private val parentActivity: TaskListActivity,
+    private var mTasks: List<Task>,
     private val twoPane: Boolean
 ) : RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
 
@@ -25,54 +25,54 @@ internal class RecyclerAdapter(
 
     init {
         onClickListener = View.OnClickListener { v ->
-            val item = v.tag as User
+            val item = v.tag as Task
             if (twoPane) {
-                val fragment = UserDetailFragment()
+                val fragment = TaskDetailFragment()
                     .apply {
                         arguments = Bundle().apply {
-                            putString(UserDetailFragment.ARG_USER_ID, item.id.toString())
+                            putString(TaskDetailFragment.ARG_TASK_ID, item.id.toString())
                         }
                     }
                 parentActivity.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.user_detail_container, fragment)
+                    .replace(R.id.task_detail_container, fragment)
                     .commit()
             } else {
-                val intent = Intent(v.context, UserDetailActivity::class.java).apply {
-                    putExtra(UserDetailFragment.ARG_USER_ID, item.id.toString())
+                val intent = Intent(v.context, TaskDetailActivity::class.java).apply {
+                    putExtra(TaskDetailFragment.ARG_TASK_ID, item.id.toString())
                 }
                 v.context.startActivity(intent)
             }
         }
     }
 
-    internal inner class CustomViewHolder(binding: UserListContentBinding) :
+    internal inner class CustomViewHolder(binding: ItemTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.idText
-        val contentView: TextView = binding.content
+        val id: TextView = binding.id
+        val title: TextView = binding.title
 
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder{
-        val binding = DataBindingUtil.inflate<UserListContentBinding>(
+        val binding = DataBindingUtil.inflate<ItemTaskBinding>(
             LayoutInflater.from(parent.context),
-            R.layout.user_list_content,
+            R.layout.item_task,
             parent,
             false)
 
         return CustomViewHolder(binding)
     }
 
-    fun updateList(users: List<User>) {
-        mUsers = users
+    fun updateList(tasks: List<Task>) {
+        mTasks = tasks
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = mUsers.size
+    override fun getItemCount() = mTasks.size
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        val item = mUsers[position]
-        holder.idView.text = item.id.toString()
-        holder.contentView.text = item.name
+        val item = mTasks[position]
+        holder.id.text = item.id.toString()
+        holder.title.text = item.title
 
         with(holder.itemView) {
             tag = item

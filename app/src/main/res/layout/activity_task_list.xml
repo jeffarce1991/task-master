@@ -10,7 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.UserListActivity">
+    tools:context=".ui.TaskListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -46,15 +46,15 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_users"
+            android:id="@+id/recyclerview_tasks"
             android:name="com.example.mvvm_template_app.UserListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".ui.UserListActivity"
-            tools:listitem="@layout/user_list_content" />
+            tools:context=".ui.TaskListActivity"
+            tools:listitem="@layout/item_task" />
 
     </FrameLayout>
 
