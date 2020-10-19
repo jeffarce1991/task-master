@@ -3,7 +3,7 @@ package com.example.taskmaster.di
 import android.content.Context
 import androidx.room.Room
 import com.example.taskmaster.room.MyDatabase
-import com.example.taskmaster.room.UsersDao
+import com.example.taskmaster.room.TaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +29,7 @@ object RoomModule {
 
     @Singleton
     @Provides
-    fun provideUsersDao(myDatabase: MyDatabase): UsersDao {
+    fun provideUsersDao(myDatabase: MyDatabase): TaskDao {
         return myDatabase.userDao()
     }
 

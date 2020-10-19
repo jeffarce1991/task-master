@@ -3,13 +3,12 @@ package com.example.taskmaster.repositories
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.taskmaster.api.UsersApi
-import com.example.taskmaster.models.User
-import com.example.taskmaster.room.UsersDao
+import com.example.taskmaster.models.Task
+import com.example.taskmaster.room.TaskDao
 import com.example.taskmaster.utils.NetworkMapper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class MainRepositoryImpl
     @Inject
     constructor(
-        private val usersDao: UsersDao,
+        private val taskDao: TaskDao,
         private val usersApi: UsersApi
     ) : MainRepository {
 
@@ -31,35 +30,22 @@ class MainRepositoryImpl
 
     var job: CompletableJob? = null
 
-    override fun getUsers(): MutableLiveData<MutableList<User>> {
+    override fun getTasks(): MutableLiveData<MutableList<Task>> {
         job = Job()
-        return object : MutableLiveData<MutableList<User>>() {
+        return object : MutableLiveData<MutableList<Task>>() {
             override fun onActive() {
                 super.onActive()
                 job?.let { theJob ->
-                    CoroutineScope(IO + theJob).launch(handler) {
-
+                    CoroutineScope(IO + theJob).launch {
                         try {
-                            val remoteUsers = usersApi.getUsers()
-                            println("debug: Remote Users $remoteUsers")
-
-                            for(dto in remoteUsers){
-                                usersDao.insert(networkMapper.mapFromDto(dto))
-                            }
-
+                            val cachedTasks = taskDao.get()
+                            println("debug: Cached Users $cachedTasks")
                             withContext(Main) {
-                                value = networkMapper.mapFromDtoList(remoteUsers) as MutableList<User>
+                                value = cachedTasks
                                 theJob.complete()
                             }
                         } catch(e: Exception) {
-                            if (e is UnknownHostException) {
-                                val cachedUsers = usersDao.get()
-                                println("debug: Cached Users $cachedUsers")
-                                withContext(Main) {
-                                    value = cachedUsers
-                                    theJob.complete()
-                                }
-                            }
+                            println("debug: Exception thrown: $e")
                         }
                     }
                 }
@@ -67,23 +53,33 @@ class MainRepositoryImpl
         }
     }
 
-    override fun getById(id: Int): LiveData<User> {
+    override fun getByIdLive(id: Int): LiveData<Task> {
         job = Job()
-        return object: LiveData<User>(){
+        return object: LiveData<Task>(){
             override fun onActive() {
                 super.onActive()
                 job?.let{ theJob ->
                     CoroutineScope(IO + theJob).launch {
-                        val user = usersDao.findById(id)
-                        println("debug: User ${user.company.name}")
+                        val task = taskDao.findById(id)
+                        println("debug: Task ${task.title}")
                         withContext(Main){
-                            value = user
+                            value = task
                             theJob.complete()
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun addTask(task: Task): Long {
+        val result = taskDao.insert(task)
+        println("debug: addTask result $result")
+        return result
+    }
+
+    override fun getById(id: Int): Task {
+        return taskDao.findById(id)
     }
 
 

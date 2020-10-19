@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.example.taskmaster.models.User
+import com.example.taskmaster.models.Task
 import com.example.taskmaster.repositories.MainRepositoryImpl
 import kotlinx.coroutines.*
 
@@ -16,7 +16,7 @@ constructor(
     private val mainRepository: MainRepositoryImpl
 ): ViewModel(){
 
-    private val _userId: MutableLiveData<Int> = MutableLiveData()
+    private val _taskId: MutableLiveData<Int> = MutableLiveData()
 
     var job: CompletableJob? = null
 
@@ -24,45 +24,62 @@ constructor(
         println("Exception thrown: $exception")
     }
 
-    private var mUsers: MutableLiveData<MutableList<User>>? = null
-    private var mUser: MutableLiveData<User>? = null
+    private var mTasks: MutableLiveData<MutableList<Task>>? = null
+    private var mTask: MutableLiveData<Task>? = null
     private var mIsUpdating: MutableLiveData<Boolean> = MutableLiveData()
     init {
         mIsUpdating.postValue(true)
-        mUsers = mainRepository.getLiveUsers()
+        mTasks = mainRepository.getTasks()
     }
 
 
-    val user: LiveData<User> = Transformations
-        .switchMap(_userId){
-            mainRepository.getById(it)
+    val task: LiveData<Task> = Transformations
+        .switchMap(_taskId){
+            mainRepository.getByIdLive(it)
         }
 
-    fun getUserById(userId: Int){
-        if (_userId.value == userId) {
+    fun getTaskById(id: Int){
+        if (_taskId.value == id) {
             return
         }
-        _userId.value = userId
+        _taskId.value = id
     }
 
-    fun  addNewValue(user: User) {
+    fun  addNewTask(task: Task){
         mIsUpdating.postValue(true)
         job = Job()
         job?.let {
             CoroutineScope(Dispatchers.IO + it).launch(handler) {
                 delay(1000)
-                val users: MutableList<User>? = mUsers!!.value
-                users!!.add(user)
-                mUsers!!.postValue(users)
+                val id = mainRepository.addTask(task)
+                if (id != -1L) {
+                    val tasks: MutableList<Task>? = mTasks!!.value
+                    tasks!!.add(mainRepository.getById(id.toInt()))
+                    mTasks!!.postValue(tasks)
+                }
                 mIsUpdating.postValue(false)
                 it.complete()
             }
         }
-
     }
 
-    fun getUsers() : MutableLiveData<MutableList<User>>? {
-        return mUsers
+    fun updateTask(task: Task) {
+        job = Job()
+        job?.let {
+            CoroutineScope(Dispatchers.IO + it).launch(handler) {
+                mainRepository.addTask(task)
+                mTask!!.postValue(task)
+                it.complete()
+            }
+        }
+    }
+
+    fun getTasks() : MutableLiveData<MutableList<Task>>? {
+        return mTasks
+    }
+
+    fun getTask() : MutableLiveData<Task>? {
+        return mTask
     }
 
 

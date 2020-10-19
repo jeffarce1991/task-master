@@ -3,22 +3,22 @@ package com.example.taskmaster.room
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.taskmaster.models.User
+import com.example.taskmaster.models.Task
 import com.example.taskmaster.room.converter.UserConverter
 
 @Database(
-    entities = [User::class ],
-    version = 1,
+    entities = [Task::class ],
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(
-    UserConverter::class
+    //UserConverter::class
 )
 abstract class MyDatabase: RoomDatabase() {
 
-    abstract fun userDao(): UsersDao
+    abstract fun userDao(): TaskDao
 
     companion object{
-        const val DATABASE_NAME: String = "mvvm_db"
+        const val DATABASE_NAME: String = "task_master_db"
     }
 }
